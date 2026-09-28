@@ -1,0 +1,23 @@
+# Configuración de Netlify para ShieldCheck IA
+#
+# Única variable de entorno requerida: GEMINI_API_KEY
+# (Netlify -> Site settings -> Environment variables)
+#
+# El backend existe únicamente para proteger la clave de Gemini.
+# El historial se guarda en el navegador (localStorage), sin nube.
+
+[build]
+  # Copia index.html a dist/ de forma multiplataforma (funciona en el build
+  # image de Netlify y también si haces `netlify deploy` desde Windows).
+  command = "node -e \"require('fs').mkdirSync('dist',{recursive:true});require('fs').copyFileSync('index.html','dist/index.html')\""
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# /api/analizar -> netlify/functions/analizar.mjs
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200

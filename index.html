@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShieldCheck IA - Tu Asistente de Ciberseguridad</title>
+    <!-- Tailwind CSS for modern responsive layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for recognizable UI icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter for maximum legibility -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b1329;
+            color: #f8fafc;
+        }
+
+        /* Custom scrollbar styling for better visibility */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        /* Dynamic Font Size Classes for Accessibility */
+        .text-size-normal { font-size: 1rem; }
+        .text-size-large { font-size: 1.15rem; }
+        .text-size-xlarge { font-size: 1.3rem; }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-slate-950 text-slate-100">
+
+    <!-- Accessibility Control Bar (Designed for older adults: size adjustment & voice assistant) -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-50 shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-2 flex flex-wrap justify-between items-center text-sm">
+            <div class="flex items-center gap-2 text-slate-300 font-medium">
+                <i class="fa-solid fa-universal-access text-amber-400 text-lg"></i>
+                <span>Opciones para leer mejor:</span>
+            </div>
+            <div class="flex items-center gap-3 mt-1 sm:mt-0">
+                <!-- Text size controls -->
+                <div class="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
+                    <button onclick="changeFontSize('normal')" class="px-2 py-1 rounded hover:bg-slate-700 text-xs font-bold" title="Tamaño normal">A</button>
+                    <button onclick="changeFontSize('large')" class="px-2 py-1 rounded hover:bg-slate-700 text-sm font-bold" title="Tamaño grande">A+</button>
+                    <button onclick="changeFontSize('xlarge')" class="px-2 py-1 rounded hover:bg-slate-700 text-base font-bold text-amber-400" title="Tamaño muy grande">A++</button>
+                </div>
+                <!-- Audio Narrator Toggle Button -->
+                <button id="voiceToggle" onclick="toggleVoiceAssistant()" class="flex items-center gap-1.5 px-3 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 rounded-lg text-xs font-bold transition">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span id="voiceText">Voz: Activada</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- App Brand Header -->
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Golden Shield Logo matching design specs -->
+                <div class="w-12 h-12 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-700 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20 border-2 border-amber-300">
+                    <div class="w-8 h-8 bg-blue-950 rounded-xl flex items-center justify-center">
+                        <i class="fa-solid fa-shield-halved text-amber-400 text-xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                        ShieldCheck <span class="text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-md text-sm border border-amber-400/30">IA</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Asistente Educativo contra Estafas Digitales</p>
+                </div>
+            </div>
+            
+            <div class="hidden sm:block text-right text-xs text-slate-400">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>
+                Protección activa para tu tranquilidad
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application View Container -->
+    <main id="appContent" class="max-w-4xl mx-auto w-full px-4 py-6 flex-grow text-size-normal">
+
+        <!-- ========================================== -->
+        <!-- PANTALLA 1: INICIO / BIENVENIDA -->
+        <!-- ========================================== -->
+        <section id="screen-welcome" class="space-y-6">
+            <!-- Hero Welcome Box -->
+            <div class="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 p-6 sm:p-8 rounded-3xl border border-amber-500/30 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex flex-col sm:flex-row items-center gap-6">
+                    <!-- App Logo Badge Large -->
+                    <div class="relative shrink-0">
+                        <div class="w-24 h-24 bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-300 rounded-3xl flex items-center justify-center shadow-2xl shadow-amber-500/30 border-4 border-amber-200">
+                            <i class="fa-solid fa-lock text-slate-950 text-5xl"></i>
+                        </div>
+                        <div class="absolute -bottom-2 -right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full border border-slate-900 font-bold">
+                            IA Gratis
+                        </div>
+                    </div>
+
+                    <div class="text-center sm:text-left space-y-2">
+                        <span class="text-amber-400 font-bold text-sm tracking-wide uppercase bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">
+                            ¡Hola, te damos la bienvenida!
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                            Tu guardián fácil de usar para evitar engaños y estafas en tu celular
+                        </h2>
+                        <p class="text-slate-300 leading-relaxed">
+                            ¿Recibiste un mensaje raro de un banco, un regalo sospechoso o alguien pidiéndote dinero urgente? <strong>Nosotros lo revisamos por ti</strong> en segundos y te explicamos sin palabras difíciles.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Simple Explanation Card -->
+                <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 pt-6 border-t border-slate-800/80">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 font-bold text-lg">1</div>
+                        <div>
+                            <h3 class="font-bold text-white text-base">Toma una foto</h3>
+                            <p class="text-slate-400 text-xs mt-1">O escribe el mensaje sospechoso que te llegó a tu teléfono.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 font-bold text-lg">2</div>
+                        <div>
+                            <h3 class="font-bold text-white text-base">Oprime Analizar</h3>
+                            <p class="text-slate-400 text-xs mt-1">Nuestra Inteligencia Artificial lee el mensaje con cuidado.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center shrink-0 font-bold text-lg">3</div>
+                        <div>
+                            <h3 class="font-bold text-white text-base">Recibe la verdad</h3>
+                            <p class="text-slate-400 text-xs mt-1">Te decimos en español claro si es seguro o un intento de estafa.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Call To Action Button -->
+                <div class="mt-8 text-center sm:text-left flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="switchScreen('screen-analyze')" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold text-lg rounded-2xl shadow-xl shadow-amber-500/25 transition transform hover:-translate-y-0.5 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-magnifying-glass-chart text-xl"></i>
+                        <span>COMENZAR MI PRIMER ANÁLISIS</span>
+                    </button>
+                    <button onclick="speakText('Bienvenido a ShieldCheck IA. Sube una foto o texto de cualquier mensaje sospechoso y te diremos si es confiable o una estafa.')" class="w-full sm:w-auto px-5 py-4 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-2xl border border-slate-700 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-play text-amber-400 text-lg"></i>
+                        <span>Escuchar explicación</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Common Scams Warning Carousel -->
+            <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                <h3 class="font-bold text-lg text-white mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                    ¿Qué tipo de trampas te ayudamos a detectar?
+                </h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex gap-3">
+                        <i class="fa-solid fa-building-columns text-amber-400 text-2xl shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-200">Mensajes del "Banco"</h4>
+                            <p class="text-slate-400 text-xs mt-1">Te dicen que bloquearon tu cuenta para que des tu clave por asustado.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex gap-3">
+                        <i class="fa-solid fa-gift text-emerald-400 text-2xl shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-200">Premios o Loterías Falsas</h4>
+                            <p class="text-slate-400 text-xs mt-1">Anuncios de ganaste un carro o dinero, pero te piden pagar algo primero.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex gap-3">
+                        <i class="fa-solid fa-box text-blue-400 text-2xl shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-200">Paquetes Detenidos</h4>
+                            <p class="text-slate-400 text-xs mt-1">Mensajes diciendo que tu encomienda no llega si no haces clic en un enlace.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex gap-3">
+                        <i class="fa-solid fa-user-gear text-purple-400 text-2xl shrink-0 mt-1"></i>
+                        <div>
+                            <h4 class="font-bold text-slate-200">Familiares con Urgencia</h4>
+                            <p class="text-slate-400 text-xs mt-1">Personas simulando ser un nieto o sobrino pidiendo dinero de emergencia.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- PANTALLA 2: INTERACCIÓN PRINCIPAL (ANÁLISIS) -->
+        <!-- ========================================== -->
+        <section id="screen-analyze" class="space-y-6 hidden">
+            
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+                <!-- Screen Header -->
+                <div class="border-b border-slate-800 pb-4">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Paso 1 de 2</span>
+                    <h2 class="text-2xl font-bold text-white mt-2">Verifica tu Mensaje, Captura o Nota de Voz</h2>
+                    <p class="text-slate-400 text-sm mt-1">Sube la foto del mensaje, pega el texto, o sube el audio sospechoso para revisarlo.</p>
+                </div>
+
+                <!-- Input Selection Tabs (Subir Imagen / Escribir Texto) -->
+                <div class="flex rounded-2xl bg-slate-950 p-1.5 border border-slate-800">
+                    <button id="tabBtnImage" onclick="selectInputType('image')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md">
+                        <i class="fa-solid fa-camera text-base"></i>
+                        <span>Subir Foto o Captura</span>
+                    </button>
+                    <button id="tabBtnText" onclick="selectInputType('text')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-to-square text-base"></i>
+                        <span>Escribir o Pegar Texto</span>
+                    </button>
+                    <button id="tabBtnAudio" onclick="selectInputType('audio')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-microphone text-base"></i>
+                        <span>Subir Nota de Voz</span>
+                    </button>
+                </div>
+
+                <!-- OPTION A: IMAGE UPLOADER -->
+                <div id="inputAreaImage" class="space-y-4">
+                    <div id="dropZone" onclick="triggerFileInput()" class="border-3 border-dashed border-slate-700 hover:border-amber-500 bg-slate-950/60 rounded-3xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center gap-4 group">
+                        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+                        
+                        <div id="uploadPlaceholder" class="space-y-3">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-800 group-hover:bg-amber-500/20 text-slate-400 group-hover:text-amber-400 flex items-center justify-center transition">
+                                <i class="fa-solid fa-cloud-arrow-up text-3xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-base font-bold text-white">Toca aquí para seleccionar una foto de tu galería</p>
+                                <p class="text-xs text-slate-400 mt-1">Puedes tomarle foto a otro celular o subir una captura de pantalla</p>
+                            </div>
+                            <span class="inline-block px-4 py-2 bg-slate-800 text-amber-400 font-bold text-xs rounded-xl border border-slate-700">
+                                <i class="fa-solid fa-image mr-1"></i> Formatos aceptados: JPG, PNG
+                            </span>
+                        </div>
+
+                        <!-- Image Preview Box -->
+                        <div id="imagePreviewContainer" class="hidden w-full relative">
+                            <div class="relative max-h-64 mx-auto rounded-2xl overflow-hidden border-2 border-amber-500/50 bg-black">
+                                <img id="imagePreview" src="" alt="Captura a analizar" class="max-h-64 mx-auto object-contain">
+                            </div>
+                            <button onclick="removeSelectedImage(event)" class="mt-3 px-4 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto">
+                                <i class="fa-solid fa-trash"></i> Quitar esta foto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPTION C: AUDIO UPLOADER -->
+                <div id="inputAreaAudio" class="space-y-4 hidden">
+                    <div id="audioDropZone" onclick="triggerAudioInput()" class="border-3 border-dashed border-slate-700 hover:border-amber-500 bg-slate-950/60 rounded-3xl p-8 text-center cursor-pointer transition flex flex-col items-center justify-center gap-4 group">
+                        <input type="file" id="audioInput" accept="audio/*,.opus,.m4a" class="hidden" onchange="handleAudioSelect(event)">
+
+                        <div id="audioUploadPlaceholder" class="space-y-3">
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-slate-800 group-hover:bg-amber-500/20 text-slate-400 group-hover:text-amber-400 flex items-center justify-center transition">
+                                <i class="fa-solid fa-microphone-lines text-3xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-base font-bold text-white">Toca aquí para subir la nota de voz sospechosa</p>
+                                <p class="text-xs text-slate-400 mt-1">Guarda el audio de WhatsApp en tu celular y súbelo aquí (máx. ~5 MB)</p>
+                            </div>
+                            <span class="inline-block px-4 py-2 bg-slate-800 text-amber-400 font-bold text-xs rounded-xl border border-slate-700">
+                                <i class="fa-solid fa-file-audio mr-1"></i> Formatos aceptados: MP3, WAV, OGG, M4A
+                            </span>
+                        </div>
+
+                        <!-- Audio Preview Box -->
+                        <div id="audioPreviewContainer" class="hidden w-full">
+                            <audio id="audioPreview" controls class="w-full"></audio>
+                            <p id="audioFileName" class="text-xs text-slate-400 mt-2 truncate"></p>
+                            <button onclick="removeSelectedAudio(event)" class="mt-3 px-4 py-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto">
+                                <i class="fa-solid fa-trash"></i> Quitar este audio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OPTION B: TEXT INPUT AREA -->
+                <div id="inputAreaText" class="space-y-4 hidden">
+                    <label class="block text-sm font-bold text-slate-200">
+                        Escribe o pega aquí el mensaje engañoso o el enlace de internet:
+                    </label>
+                    <textarea id="textInput" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-4 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-500 text-base" placeholder="Ejemplo: 'BANCO NOTIFICA: Su cuenta ha sido suspendida. Entre a www.banco-falso.com para activar...'"></textarea>
+                </div>
+
+                <!-- QUICK PRESET SCENARIO BUTTONS (for easy demo testing for older adults) -->
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1">
+                        <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                        O prueba tocando uno de estos ejemplos reales:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                        <button onclick="loadPreset('banco')" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-left border border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-red-400 text-sm"></i>
+                            <span>"Urgente Banco: Cuenta bloqueada"</span>
+                        </button>
+                        <button onclick="loadPreset('premio')" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-left border border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-gift text-amber-400 text-sm"></i>
+                            <span>"Ganaste $5,000 dólares en sorteo"</span>
+                        </button>
+                        <button onclick="loadPreset('paquete')" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-left border border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-box text-blue-400 text-sm"></i>
+                            <span>"Correo: Paquete detenido en aduana"</span>
+                        </button>
+                        <button onclick="loadPreset('seguro')" class="p-2.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-xl text-left border border-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-sm"></i>
+                            <span>"Mensaje real de confirmación médica"</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ANALYZE SUBMIT BUTTON -->
+                <button id="btnAnalyze" onclick="startAIAnalysis()" class="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold text-lg rounded-2xl shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-robot text-xl"></i>
+                    <span>ANALIZAR MENSAJE AHORA</span>
+                </button>
+            </div>
+
+
+            <!-- AZURE AI 6-STEP PROCESS VISUALIZER (Simulating Real Technical Flow behind the scenes) -->
+            <div id="aiProcessCard" class="hidden bg-slate-900 p-6 rounded-3xl border border-amber-500/40 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <h3 class="font-bold text-white text-base flex items-center gap-2">
+                        <i class="fa-solid fa-microchip text-amber-400 animate-spin"></i>
+                        Procesando con Inteligencia Artificial (Gemini AI)
+                    </h3>
+                </div>
+
+                <p class="text-xs text-slate-400">
+                    Nuestra tecnología lee el texto y busca patrones de engaño en 6 pasos automáticos:
+                </p>
+
+                <!-- 6 Step Indicators from Document Page 4 -->
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 pt-2">
+                    <div id="step-1" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-upload text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">1. Carga</p>
+                    </div>
+                    <div id="step-2" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-eye text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">2. Visión IA</p>
+                    </div>
+                    <div id="step-3" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-font text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">3. Extraer</p>
+                    </div>
+                    <div id="step-4" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-language text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">4. Lenguaje</p>
+                    </div>
+                    <div id="step-5" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-shield-cat text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">5. Evaluar</p>
+                    </div>
+                    <div id="step-6" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-center space-y-1">
+                        <i class="fa-solid fa-square-check text-slate-500 text-lg"></i>
+                        <p class="text-[10px] font-bold text-slate-400">6. Resultado</p>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- DIAGNOSIS RESULT DISPLAY CARD -->
+            <div id="resultCard" class="hidden space-y-6">
+                <div id="resultBanner" class="p-6 sm:p-8 rounded-3xl border-2 shadow-2xl space-y-6 bg-slate-900 border-red-500">
+                    
+                    <!-- Header with Status Icon and Badge -->
+                    <div class="flex items-start justify-between flex-wrap gap-4 border-b border-slate-800 pb-4">
+                        <div class="flex items-center gap-4">
+                            <div id="resultBadgeIcon" class="w-16 h-16 rounded-2xl bg-red-500/20 text-red-500 flex items-center justify-center text-3xl shrink-0">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                            </div>
+                            <div>
+                                <span id="resultRiskLevel" class="text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-red-500 text-white">
+                                    ALTO RIESGO - PELIGRO
+                                </span>
+                                <h3 id="resultTitle" class="text-2xl font-bold text-white mt-1">¡Cuidado! Este mensaje es una ESTAFA</h3>
+                            </div>
+                        </div>
+
+                        <button onclick="readDiagnosisResult()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-2">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Escuchar diagnóstico</span>
+                        </button>
+                    </div>
+
+                    <!-- Simple Educational Breakdown -->
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-300 uppercase tracking-wide">¿Por qué te advertimos esto? (En palabras sencillas)</h4>
+                            <p id="resultExplanation" class="text-base text-slate-100 mt-1 leading-relaxed bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                                Este mensaje pretende hacerse pasar por tu banco para asustarte diciéndote que tu cuenta está bloqueada. Quieren que entres a un enlace falso para robar tus claves secretas.
+                            </p>
+                        </div>
+
+                        <!-- Detected Red Flags List (Puntos sospechosos) -->
+                        <div>
+                            <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wide flex items-center gap-2">
+                                <i class="fa-solid fa-flag"></i>
+                                Señales sospechosas detectadas (Banderas Rojas):
+                            </h4>
+                            <ul id="redFlagsList" class="mt-2 space-y-2 text-sm text-slate-300">
+                                <!-- Populated dynamically -->
+                            </ul>
+                        </div>
+
+                        <!-- Clear Action Advice for Older Adults -->
+                        <div id="actionAdviceBox" class="p-4 bg-red-950/40 rounded-2xl border border-red-500/30 text-slate-200 space-y-2">
+                            <p class="font-bold text-red-400 flex items-center gap-2 text-base">
+                                <i class="fa-solid fa-hand"></i>
+                                ¿Qué debes hacer ahora?
+                            </p>
+                            <p id="actionAdviceText" class="text-sm leading-relaxed">
+                                <strong>NO hagas clic en ningún enlace.</strong> Borra este mensaje de tu teléfono. Si tienes dudas con tu banco, llámalos usando el número que está escrito al reverso de tu tarjeta de plástico.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Button to proceed to History or New Analysis -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                        <button onclick="resetAnalysis()" class="flex-1 py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-sm transition text-center">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Analizar otro mensaje
+                        </button>
+                        <button onclick="switchScreen('screen-history')" class="flex-1 py-3 px-4 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-xl text-sm transition text-center">
+                            <i class="fa-solid fa-clock-rotate-left mr-1"></i> Ver en mi Historial guardado
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- PANTALLA: APRENDE A TU PROPIO RITMO (VIDEOS) -->
+        <!-- ========================================== -->
+        <section id="screen-learn" class="space-y-6 hidden">
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Módulo de alfabetización digital</span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Aprende a tu propio ritmo</h2>
+                        <p class="text-slate-400 text-sm mt-1 max-w-xl">Videos guiados por IA adaptados a tu experiencia. Toca cualquier curso para comenzar a ver el tutorial.</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <span id="learnProgress" class="text-xs font-bold text-slate-300 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800">0 de 5 vistos</span>
+                        <button onclick="speakText('Aprende a tu propio ritmo. Videos guiados por inteligencia artificial adaptados a tu experiencia. Toca cualquier curso para comenzar a ver el tutorial.')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-2" title="Escuchar explicación">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Escuchar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Las tarjetas se generan desde el arreglo CURSOS_VIDEOS (ver JavaScript) -->
+                <div id="videoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-left"></div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- PANTALLA 3: HISTORIAL Y EDUCACIÓN -->
+        <!-- ========================================== -->
+        <section id="screen-history" class="space-y-6 hidden">
+            
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Tu Registro</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Historial de Análisis</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">Revisa las verificaciones que has realizado anteriormente.</p>
+                    </div>
+                    
+                    <button onclick="clearHistory()" class="px-3 py-1.5 bg-slate-800 hover:bg-red-950 hover:text-red-400 text-slate-400 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-700">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Borrar historial</span>
+                    </button>
+                </div>
+
+                <!-- History Items List -->
+                <div id="historyListContainer" class="space-y-3">
+                    <!-- Dynamic Items will be rendered here -->
+                </div>
+            </div>
+
+
+            <!-- EDUCATIONAL SECTION: "¿Qué aprendimos hoy?" -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 p-6 sm:p-8 rounded-3xl border border-amber-500/30 space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl shrink-0 border border-amber-500/30">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">¿Qué aprendimos hoy?</h3>
+                        <p class="text-xs text-slate-400">Consejos breves para aprender a defenderte solo</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Tip Card 1 -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Regla de Oro #1</span>
+                        <h4 class="font-bold text-white text-base">La prisa es mala consejera</h4>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Los estafadores siempre dicen que tienes "solo 5 minutos" o que te van a "bloquear hoy mismo". Lo hacen para que te asustes y no pienses. <strong>Respira profundo y no actúes con prisa.</strong>
+                        </p>
+                    </div>
+
+                    <!-- Tip Card 2 -->
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+                        <span class="text-xs font-bold text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded">Regla de Oro #2</span>
+                        <h4 class="font-bold text-white text-base">Revisa las letras del enlace</h4>
+                        <p class="text-slate-300 text-xs leading-relaxed">
+                            Un banco real usa direcciones sencillas como <code class="text-amber-300 bg-slate-900 px-1 rounded">banco.com</code>. Si ves letras extrañas como <code class="text-red-400 bg-slate-900 px-1 rounded">banco-seguro-alerta123.net</code>, ¡es totalmente falso!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Interactive Mini Quiz for Learning -->
+                <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+                    <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-circle-question text-amber-400"></i>
+                        Ponte a prueba: ¿Es un mensaje verdadero o falso?
+                    </h4>
+                    <p class="text-xs text-slate-300">
+                        <em>"Estimado cliente, su tarjeta ha sido suspendida. Entre inmediatamente a este enlace para reactivarla."</em>
+                    </p>
+                    <div class="flex gap-3 pt-1">
+                        <button onclick="checkQuizAnswer(true)" class="px-4 py-2 bg-slate-900 hover:bg-emerald-950 hover:text-emerald-400 text-slate-300 rounded-xl text-xs font-bold border border-slate-700 transition">
+                            <i class="fa-solid fa-check mr-1"></i> Es Seguro
+                        </button>
+                        <button onclick="checkQuizAnswer(false)" class="px-4 py-2 bg-slate-900 hover:bg-red-950 hover:text-red-400 text-slate-300 rounded-xl text-xs font-bold border border-slate-700 transition">
+                            <i class="fa-solid fa-xmark mr-1"></i> Es Falso / Estafa
+                        </button>
+                    </div>
+                    <div id="quizFeedback" class="hidden text-xs p-3 rounded-xl"></div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- PANTALLA 4: ¿CÓMO FUNCIONA? E IMPACTO SOCIAL -->
+        <!-- ========================================== -->
+        <section id="screen-info" class="space-y-6 hidden">
+            
+            <!-- AI Architecture Explanation (Page 4 from doc) -->
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Arquitectura Técnica</span>
+                    <h2 class="text-2xl font-bold text-white mt-1">¿Cómo trabaja nuestra Inteligencia Artificial?</h2>
+                    <p class="text-slate-400 text-xs mt-1">Usamos la Inteligencia Artificial Gemini de Google en la nube para analizar en 6 sencillos pasos.</p>
+                </div>
+
+                <!-- Step diagram -->
+                <div class="space-y-3">
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Carga del Usuario</h4>
+                            <p class="text-slate-400 text-xs">Subes la foto de tu pantalla o pegas el mensaje que te da dudas.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">2</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Visión Inteligente</h4>
+                            <p class="text-slate-400 text-xs">La tecnología examina la imagen para reconocer todas las palabras escritas.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">3</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Extracción de Texto</h4>
+                            <p class="text-slate-400 text-xs">Separa el mensaje, los números de teléfono y los enlaces web.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">4</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Comprensión de Lenguaje</h4>
+                            <p class="text-slate-400 text-xs">Analiza las intenciones del texto: si busca asustarte o pedir dinero.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">5</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Evaluación de Riesgo</h4>
+                            <p class="text-slate-400 text-xs">Compara el mensaje con miles de patrones de fraude conocidos.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold shrink-0">6</div>
+                        <div>
+                            <h4 class="font-bold text-white text-sm">Diagnóstico Educativo</h4>
+                            <p class="text-slate-400 text-xs">Te presenta una explicación amigable en español claro para cuidarte.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Impact & UN SDGs Section (Page 6 from doc) -->
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-md border border-emerald-400/20">Impacto Social y ODS</span>
+                    <h2 class="text-2xl font-bold text-white mt-1">Compromiso con la Comunidad</h2>
+                    <p class="text-slate-400 text-xs mt-1">Alineados con los Objetivos de Desarrollo Sostenible de la ONU.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-blue-500/30 text-center space-y-2">
+                        <div class="w-12 h-12 bg-blue-600/20 text-blue-400 rounded-2xl mx-auto flex items-center justify-center text-xl font-black">
+                            ODS 16
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Paz y Justicia</h4>
+                        <p class="text-slate-400 text-xs">Combate el ciberdelito y el fraude virtual protegiendo el patrimonio familiar.</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-red-500/30 text-center space-y-2">
+                        <div class="w-12 h-12 bg-red-600/20 text-red-400 rounded-2xl mx-auto flex items-center justify-center text-xl font-black">
+                            ODS 4
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Educación de Calidad</h4>
+                        <p class="text-slate-400 text-xs">Promueve la alfabetización digital mediante explicaciones sencillas paso a paso.</p>
+                    </div>
+
+                    <div class="bg-slate-950 p-5 rounded-2xl border border-amber-500/30 text-center space-y-2">
+                        <div class="w-12 h-12 bg-amber-600/20 text-amber-400 rounded-2xl mx-auto flex items-center justify-center text-xl font-black">
+                            ODS 9
+                        </div>
+                        <h4 class="font-bold text-white text-sm">Innovación e Infraestructura</h4>
+                        <p class="text-slate-400 text-xs">Aplica Inteligencia Artificial en la nube para crear soluciones públicas y seguras.</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- PANTALLA 5: CONFIGURACIÓN Y ESTADO -->
+        <!-- ========================================== -->
+        <section id="screen-config" class="space-y-6 hidden">
+
+                <!-- Estado del sistema (IA y almacenamiento local) -->
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 bg-emerald-400/10 px-2.5 py-1 rounded-md border border-emerald-400/20">Estado del sistema</span>
+                        <h2 class="text-2xl font-bold text-white mt-1">Configuración</h2>
+                        <p class="text-slate-400 text-xs mt-0.5">Revisa que todo esté funcionando bien.</p>
+                    </div>
+                    <button onclick="checkSystemStatus()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-amber-400 rounded-xl text-xs font-bold border border-slate-700 flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Comprobar de nuevo</span>
+                    </button>
+                </div>
+
+                <div id="statusGemini" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3 text-sm text-slate-400">
+                    Comprobando...
+                </div>
+                <div id="statusHistorial" class="p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-center gap-3 text-sm text-slate-400">
+                    Comprobando...
+                </div>
+                <p class="text-xs text-slate-400">Modelo de IA en uso: <span id="statusModelo" class="text-slate-200 font-mono">...</span></p>
+            </div>
+
+            <!-- Preferencias de lectura y voz (se guardan en el dispositivo) -->
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-md border border-amber-400/20">Preferencias</span>
+                    <h3 class="text-xl font-bold text-white mt-1">Lectura y voz</h3>
+                    <p class="text-slate-400 text-xs mt-0.5">Tus ajustes quedan guardados en este dispositivo.</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex bg-slate-950 rounded-xl p-1 border border-slate-700">
+                        <button onclick="changeFontSize('normal')" class="px-3 py-2 rounded-lg hover:bg-slate-700 text-xs font-bold text-slate-200" title="Tamaño normal">A</button>
+                        <button onclick="changeFontSize('large')" class="px-3 py-2 rounded-lg hover:bg-slate-700 text-sm font-bold text-slate-200" title="Tamaño grande">A+</button>
+                        <button onclick="changeFontSize('xlarge')" class="px-3 py-2 rounded-lg hover:bg-slate-700 text-base font-bold text-amber-400" title="Tamaño muy grande">A++</button>
+                    </div>
+                    <button onclick="toggleVoiceAssistant()" class="flex items-center gap-2 px-4 py-2 bg-slate-950 hover:bg-slate-800 text-amber-400 border border-amber-500/30 rounded-xl text-sm font-bold">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span id="configVoiceText">Voz: Activada</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Privacidad y datos -->
+            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-400/10 px-2.5 py-1 rounded-md border border-blue-400/20">Privacidad y datos</span>
+                    <h3 class="text-xl font-bold text-white mt-1">Mis datos</h3>
+                </div>
+                <p class="text-slate-300 text-sm leading-relaxed">
+                    Tu historial se guarda <strong>solo en este dispositivo</strong>, dentro del almacenamiento local del navegador. Nunca se envía a internet ni pedimos tu nombre, correo o teléfono.
+                </p>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs text-slate-400">
+                    Mi identificador: <span id="configClientId" class="text-slate-200 font-mono">...</span>
+                </div>
+                <p class="text-sm text-slate-300">Análisis guardados en tu historial: <span id="configHistoryCount" class="font-bold text-amber-400">0</span></p>
+                <button onclick="clearHistory()" class="px-4 py-2 bg-slate-800 hover:bg-red-950 hover:text-red-400 text-slate-300 rounded-xl text-xs font-bold border border-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-trash-can"></i>
+                    <span>Borrar todo mi historial</span>
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Navigation Bar (Simulates app tabs) -->
+    <nav class="bg-slate-900 border-t border-slate-800 sticky bottom-0 z-50 shadow-2xl">
+        <div class="max-w-4xl mx-auto flex justify-around items-center px-2 py-2">
+            
+            <button id="nav-welcome" onclick="switchScreen('screen-welcome')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-amber-400 font-bold transition">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[11px] mt-1">Inicio</span>
+            </button>
+
+            <button id="nav-analyze" onclick="switchScreen('screen-analyze')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-magnifying-glass-chart text-lg"></i>
+                <span class="text-[11px] mt-1">Analizar</span>
+            </button>
+
+            <button id="nav-learn" onclick="switchScreen('screen-learn')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-graduation-cap text-lg"></i>
+                <span class="text-[11px] mt-1">Aprender</span>
+            </button>
+
+            <button id="nav-history" onclick="switchScreen('screen-history')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                <span class="text-[11px] mt-1">Historial</span>
+            </button>
+
+            <button id="nav-info" onclick="switchScreen('screen-info')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-circle-info text-lg"></i>
+                <span class="text-[11px] mt-1">¿Cómo Funciona?</span>
+            </button>
+
+            <button id="nav-config" onclick="switchScreen('screen-config')" class="flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="text-[11px] mt-1">Ajustes</span>
+            </button>
+
+        </div>
+    </nav>
+
+
+    <!-- Reproductor de video de las unidades de aprendizaje -->
+    <div id="videoModal" class="fixed inset-0 z-[60] hidden items-center justify-center bg-black/80 p-4" onclick="closeVideoModal()" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+        <div class="w-full max-w-3xl bg-slate-900 border border-slate-700 rounded-3xl overflow-hidden shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between gap-3 px-5 py-3 border-b border-slate-800">
+                <div class="min-w-0">
+                    <span id="videoModalUnit" class="text-[10px] font-bold uppercase tracking-wider text-amber-400"></span>
+                    <h3 id="videoModalTitle" class="font-bold text-white text-base truncate"></h3>
+                </div>
+                <button onclick="closeVideoModal()" class="w-9 h-9 shrink-0 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center" aria-label="Cerrar video" title="Cerrar">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="videoModalBody" class="aspect-video bg-black flex items-center justify-center"></div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Box -->
+    <div id="toastNotification" class="fixed top-20 right-4 bg-slate-900 border border-amber-500 text-white px-4 py-3 rounded-2xl shadow-2xl hidden z-50 flex items-center gap-3">
+        <i class="fa-solid fa-bell text-amber-400"></i>
+        <span id="toastText" class="text-xs font-medium">Mensaje de notificación</span>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
+    <!-- ========================================== -->
+    <script>
+        // Global Application State Variables
+        let voiceEnabled = true;
+        let selectedImageBase64 = null;
+        let selectedImageMimeType = 'image/png';
+        let selectedAudioBase64 = null;
+        let selectedAudioMimeType = null;
+        const AUDIO_MAX_BYTES = 5 * 1024 * 1024; // ~5 MB, alineado con el límite del backend
+        let currentInputType = 'image'; // 'image', 'text' o 'audio' — refleja la pestaña activa
+        let historyData = []; // historial local; se carga desde localStorage (ver cargarHistorial)
+        const HISTORIAL_KEY = 'shieldcheck_historial'; // clave en localStorage
+        const HISTORIAL_MAX = 50;                      // entradas máximas guardadas
+        let currentFontSize = 'normal';
+        let toastTimer = null;
+
+        // Clases compartidas para los botones activo/inactivo de pestañas y navegación
+        const CLASE_NAV_ACTIVA = 'flex flex-col items-center py-1.5 px-2 rounded-2xl text-amber-400 font-bold transition bg-slate-800/60 border border-amber-500/20';
+        const CLASE_NAV_INACTIVA = 'flex flex-col items-center py-1.5 px-2 rounded-2xl text-slate-400 hover:text-white transition';
+        const CLASE_TAB_ACTIVA = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 bg-amber-500 text-slate-950 shadow-md';
+        const CLASE_TAB_INACTIVA = 'flex-1 py-3 px-4 rounded-xl font-bold text-sm text-slate-400 hover:text-white transition flex items-center justify-center gap-2';
+
+        // Identificador anónimo de este navegador; se muestra en Ajustes.
+        function getClienteId() {
+            let id = localStorage.getItem('shieldcheck_cliente_id');
+            if (!id) {
+                id = (crypto.randomUUID ? crypto.randomUUID() : 'cid-' + Date.now() + '-' + Math.random().toString(16).slice(2));
+                localStorage.setItem('shieldcheck_cliente_id', id);
+            }
+            return id;
+        }
+
+        // ---------- Utilidades de interfaz ----------
+        // Toast de notificaciones (se autocierra a los 3 segundos)
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const textEl = document.getElementById('toastText');
+            if (!toast || !textEl) return;
+            textEl.textContent = message;
+            toast.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+
+        // Preferencias guardadas en el dispositivo (tamaño de letra y voz)
+        function savePrefs() {
+            localStorage.setItem('shieldcheck_fuente', currentFontSize);
+            localStorage.setItem('shieldcheck_voz', voiceEnabled ? '1' : '0');
+        }
+
+        function loadPrefs() {
+            const fuente = localStorage.getItem('shieldcheck_fuente');
+            if (fuente === 'normal' || fuente === 'large' || fuente === 'xlarge') applyFontSize(fuente);
+            if (localStorage.getItem('shieldcheck_voz') === '0') voiceEnabled = false;
+            syncVoiceLabels();
+        }
+
+        function syncVoiceLabels() {
+            const label = voiceEnabled ? 'Voz: Activada' : 'Voz: Desactivada';
+            const header = document.getElementById('voiceText');
+            const config = document.getElementById('configVoiceText');
+            if (header) header.textContent = label;
+            if (config) config.textContent = label;
+        }
+
+        function applyFontSize(size) {
+            const main = document.getElementById('appContent');
+            main.classList.remove('text-size-normal', 'text-size-large', 'text-size-xlarge');
+            main.classList.add('text-size-' + size);
+            currentFontSize = size;
+        }
+
+        // Pinta una tarjeta de estado (pantalla Configuración)
+        function setStatusCard(el, tipo, mensaje) {
+            const colores = {
+                ok: 'border-emerald-500/40 text-emerald-400',
+                mal: 'border-red-500/40 text-red-400',
+                neutro: 'border-slate-700 text-slate-300'
+            };
+            const iconos = { ok: 'fa-circle-check', mal: 'fa-circle-xmark', neutro: 'fa-circle-question' };
+            el.className = `p-4 bg-slate-950 rounded-2xl border ${colores[tipo]} flex items-center gap-3 text-sm`;
+            el.innerHTML = '';
+            const icon = document.createElement('i');
+            icon.className = `fa-solid ${iconos[tipo]} shrink-0`;
+            const span = document.createElement('span');
+            span.textContent = mensaje;
+            el.appendChild(icon);
+            el.appendChild(span);
+        }
+
+        async function checkSystemStatus() {
+            const elGemini = document.getElementById('statusGemini');
+            const elHistorial = document.getElementById('statusHistorial');
+            const elModelo = document.getElementById('statusModelo');
+            if (!elGemini || !elHistorial) return;
+
+            setStatusCard(elGemini, 'neutro', 'Comprobando...');
+            setStatusCard(elHistorial, 'neutro', 'Comprobando...');
+            if (elModelo) elModelo.textContent = '...';
+
+            // /api/health solo existe en local (server.js). En Netlify falla
+            // y se muestra como información, no como error.
+            try {
+                const response = await fetch('/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    setStatusCard(elGemini, data.ok ? 'ok' : 'mal',
+                        data.ok ? 'Conectado a Google Gemini.' : 'Sin conexión con Gemini.');
+                    if (elModelo) elModelo.textContent = data.modelo || 'desconocido';
+                }
+            } catch {
+                if (elModelo) elModelo.textContent = '(verificado al analizar)';
+                setStatusCard(elGemini, 'neutro', 'Se verifica al hacer un análisis.');
+            }
+
+            // El historial es local: no depende de ningún servicio externo
+            setStatusCard(elHistorial, 'ok', 'Historial guardado solo en este dispositivo.');
+        }
+
+        // Refresca los datos de la pantalla Configuración
+        function refreshConfigScreen() {
+            const clientId = document.getElementById('configClientId');
+            const count = document.getElementById('configHistoryCount');
+            if (clientId) clientId.textContent = getClienteId();
+            if (count) count.textContent = String(historyData.length);
+            syncVoiceLabels();
+            checkSystemStatus();
+        }
+
+        // Mensajes de ejemplo para probar la app rápido (solo texto)
+        const PRESETS = {
+            banco: "URGENTE BANCO CENTRAL: Su cuenta de ahorro presenta un bloqueo preventivo. Ingrese inmediatamente en www.banco-verificacion-segura.com/activar para evitar la cancelacion de su tarjeta.",
+            premio: "¡Felicidades! Has sido seleccionado ganador de un vehículo 0KM y $5,000 USD en nuestra gran rifa. Para reclamar tu premio debes enviar un depósito de $20 para gastos de envío al siguiente enlace...",
+            paquete: "Servicio de Correo: Su paquete #849202 no ha podido ser entregado debido a falta de pago de impuestos ($1.50). Actualice su dirección aquí: http://paquetes-entrega-express.biz",
+            seguro: "Hola María, le recordamos su cita médica para mañana a las 10:00 AM en el Consultorio #4. Si necesita cancelar responda CANCELAR a este mensaje. Gracias."
+        };
+
+        // Inicialización al cargar la página.
+        // No se habla automáticamente: los navegadores bloquean la síntesis de
+        // voz sin un gesto previo del usuario y solo generaría confusión.
+        window.onload = function() {
+            loadPrefs();
+            cargarHistorial();
+            renderCursos();
+            showToast("Aplicación lista");
+        };
+
+        // ---------- Historial local (localStorage del navegador) ----------
+        function leerHistorialLocal() {
+            try {
+                const arr = JSON.parse(localStorage.getItem(HISTORIAL_KEY));
+                return Array.isArray(arr) ? arr : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function guardarHistorialLocal() {
+            try {
+                localStorage.setItem(HISTORIAL_KEY, JSON.stringify(historyData.slice(0, HISTORIAL_MAX)));
+            } catch (error) {
+                console.error('No se pudo guardar el historial local:', error);
+            }
+        }
+
+        // Carga el historial guardado en este dispositivo
+        function cargarHistorial() {
+            historyData = leerHistorialLocal();
+            renderHistoryList();
+        }
+
+        // Convierte la respuesta de la IA en una entrada del historial
+        function entradaDesdeAnalisis(newItem) {
+            return {
+                id: 'h-' + Date.now(),
+                date: new Date().toLocaleString('es-ES'),
+                title: newItem.titulo,
+                risk: newItem.nivelRiesgo || 'MEDIO',
+                explanation: newItem.explicacion
+            };
+        }
+
+        // ---------- Aprende a tu propio ritmo (videos) ----------
+        // >>> AQUÍ CONECTAS TUS 5 VIDEOS <<<
+        // Pon en "src" la URL de cada video:
+        //   - Archivo propio:  'videos/unidad1.mp4'
+        //   - YouTube:         'https://www.youtube.com/watch?v=XXXXXXXXXXX'
+        //   - Vimeo:           'https://vimeo.com/123456789'
+        // Mientras "src" esté vacío, la tarjeta muestra "Próximamente".
+        const CURSOS_VIDEOS = [
+            { unidad: 1, titulo: 'Primeros pasos',       descripcion: 'Conceptos base: celular, wifi y contraseñas.',  src: 'Video/unidad_1.mp4' },
+            { unidad: 2, titulo: 'Enlaces sospechosos',  descripcion: 'Identifica links falsos y mensajes urgentes.',  src: 'Video/unidad_2.mp4' },
+            { unidad: 3, titulo: 'Estafas por imágenes', descripcion: 'Fotos, QR y comprobantes de pago falsos.',      src: 'Video/unidad_3.mp4' },
+            { unidad: 4, titulo: 'Estafas por audio',    descripcion: 'Voces clonadas y familiares en apuros.',        src: 'Video/unidad_4.mp4' },
+            { unidad: 5, titulo: 'Uso de ShieldCheck',   descripcion: 'Aprende a interpretar nuestros resultados.',    src: 'Video/unidad_5.mp4' }
+        ];
+        const VIDEOS_VISTOS_KEY = 'shieldcheck_videos_vistos';
+
+        function leerVideosVistos() {
+            try {
+                const arr = JSON.parse(localStorage.getItem(VIDEOS_VISTOS_KEY));
+                return Array.isArray(arr) ? arr : [];
+            } catch { return []; }
+        }
+
+        function marcarVideoVisto(unidad) {
+            const vistos = leerVideosVistos();
+            if (!vistos.includes(unidad)) {
+                vistos.push(unidad);
+                try { localStorage.setItem(VIDEOS_VISTOS_KEY, JSON.stringify(vistos)); } catch {}
+            }
+            renderCursos();
+        }
+
+        // Construye las tarjetas con nodos y textContent (sin innerHTML)
+        function renderCursos() {
+            const grid = document.getElementById('videoGrid');
+            if (!grid) return;
+            const vistos = leerVideosVistos();
+            grid.innerHTML = '';
+
+            CURSOS_VIDEOS.forEach(curso => {
+                const visto = vistos.includes(curso.unidad);
+
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = 'bg-slate-800/60 rounded-2xl overflow-hidden border border-slate-700 hover:border-amber-500 transition-colors cursor-pointer group flex flex-col text-left focus:outline-none focus:border-amber-500';
+                card.setAttribute('aria-label', `Unidad ${curso.unidad}: ${curso.titulo}`);
+                card.addEventListener('click', () => openVideo(curso.unidad));
+
+                const thumb = document.createElement('div');
+                thumb.className = 'h-28 w-full bg-slate-800 relative flex items-center justify-center';
+
+                const play = document.createElement('i');
+                play.className = 'fa-solid fa-play text-4xl text-white/30 group-hover:text-amber-400 transition-all scale-90 group-hover:scale-110 duration-300';
+                thumb.appendChild(play);
+
+                if (visto) {
+                    const check = document.createElement('span');
+                    check.className = 'absolute top-2 left-2 bg-emerald-600/90 text-white text-[10px] font-bold px-2 py-1 rounded flex items-center gap-1';
+                    const checkIcon = document.createElement('i');
+                    checkIcon.className = 'fa-solid fa-check';
+                    check.appendChild(checkIcon);
+                    check.appendChild(document.createTextNode(' Visto'));
+                    thumb.appendChild(check);
+                }
+
+                if (!curso.src) {
+                    const soon = document.createElement('span');
+                    soon.className = 'absolute top-2 right-2 bg-slate-950/80 text-slate-400 text-[10px] font-bold px-2 py-1 rounded';
+                    soon.textContent = 'Próximamente';
+                    thumb.appendChild(soon);
+                }
+
+                const badge = document.createElement('span');
+                badge.className = 'absolute bottom-2 right-2 bg-black/80 text-[10px] font-bold px-2 py-1 rounded text-amber-400 tracking-wide uppercase';
+                badge.textContent = `Unidad ${curso.unidad}`;
+                thumb.appendChild(badge);
+
+                const info = document.createElement('div');
+                info.className = 'p-4';
+                const h = document.createElement('h4');
+                h.className = 'font-bold text-white text-sm mb-1 leading-tight';
+                h.textContent = curso.titulo;
+                const p = document.createElement('p');
+                p.className = 'text-xs text-slate-400';
+                p.textContent = curso.descripcion;
+                info.appendChild(h);
+                info.appendChild(p);
+
+                card.appendChild(thumb);
+                card.appendChild(info);
+                grid.appendChild(card);
+            });
+
+            const contador = document.getElementById('learnProgress');
+            if (contador) {
+                const total = CURSOS_VIDEOS.length;
+                const n = CURSOS_VIDEOS.filter(c => vistos.includes(c.unidad)).length;
+                contador.textContent = `${n} de ${total} vistos`;
+            }
+        }
+
+        // Convierte URLs de YouTube/Vimeo a su versión "embed"; devuelve null si es un archivo de video
+        function urlEmbedVideo(url) {
+            let m = url.match(/(?:youtube\.com\/watch\?(?:.*&)?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]{11})/);
+            if (m) return 'https://www.youtube.com/embed/' + m[1] + '?rel=0';
+            m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+            if (m) return 'https://player.vimeo.com/video/' + m[1];
+            return null;
+        }
+
+        function openVideo(unidad) {
+            const curso = CURSOS_VIDEOS.find(c => c.unidad === unidad);
+            if (!curso) return;
+
+            const modal = document.getElementById('videoModal');
+            const body = document.getElementById('videoModalBody');
+            document.getElementById('videoModalUnit').textContent = `Unidad ${curso.unidad}`;
+            document.getElementById('videoModalTitle').textContent = curso.titulo;
+            body.innerHTML = '';
+
+            if (!curso.src) {
+                const aviso = document.createElement('div');
+                aviso.className = 'text-center p-8 space-y-3';
+                const ico = document.createElement('i');
+                ico.className = 'fa-solid fa-film text-5xl text-slate-600';
+                const t = document.createElement('p');
+                t.className = 'text-slate-300 font-bold';
+                t.textContent = 'Este video estará disponible muy pronto.';
+                aviso.appendChild(ico);
+                aviso.appendChild(t);
+                body.appendChild(aviso);
+            } else {
+                const embed = urlEmbedVideo(curso.src);
+                if (embed) {
+                    const iframe = document.createElement('iframe');
+                    iframe.src = embed;
+                    iframe.className = 'w-full h-full';
+                    iframe.title = curso.titulo;
+                    iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen';
+                    iframe.allowFullscreen = true;
+                    body.appendChild(iframe);
+                } else {
+                    const video = document.createElement('video');
+                    video.src = curso.src;
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.className = 'w-full h-full';
+                    body.appendChild(video);
+                }
+                marcarVideoVisto(curso.unidad);
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            speakText(`Unidad ${curso.unidad}. ${curso.titulo}.`);
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            if (!modal) return;
+            // Vaciar el cuerpo detiene la reproducción (video o iframe)
+            document.getElementById('videoModalBody').innerHTML = '';
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeVideoModal();
+        });
+
+        // Navigation Switcher Function
+        function switchScreen(screenId) {
+            closeVideoModal();
+            // Hide all screens
+            document.querySelectorAll('main > section').forEach(sec => sec.classList.add('hidden'));
+            
+            // Show target screen
+            const target = document.getElementById(screenId);
+            if (target) target.classList.remove('hidden');
+
+            // Update bottom navigation bar styles
+            const navMap = {
+                'screen-welcome': 'nav-welcome',
+                'screen-analyze': 'nav-analyze',
+                'screen-learn': 'nav-learn',
+                'screen-history': 'nav-history',
+                'screen-info': 'nav-info',
+                'screen-config': 'nav-config'
+            };
+
+            Object.values(navMap).forEach(btnId => {
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.className = CLASE_NAV_INACTIVA;
+                }
+            });
+
+            const activeBtn = document.getElementById(navMap[screenId]);
+            if (activeBtn) {
+                activeBtn.className = CLASE_NAV_ACTIVA;
+            }
+
+            // Al entrar a Configuración: refrescar estado de servicios y datos
+            if (screenId === 'screen-config') {
+                refreshConfigScreen();
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function changeFontSize(size) {
+            applyFontSize(size);
+            savePrefs();
+            showToast("Tamaño de texto actualizado");
+        }
+
+        // Accessibility: Text to Speech Assistant
+        function toggleVoiceAssistant() {
+            voiceEnabled = !voiceEnabled;
+            savePrefs();
+            syncVoiceLabels();
+            if (voiceEnabled) {
+                showToast("Asistente de voz activado");
+                speakText("Asistente de voz activado");
+            } else {
+                window.speechSynthesis.cancel();
+                showToast("Asistente de voz desactivado");
+            }
+        }
+
+        function speakText(text) {
+            if (!voiceEnabled || !('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Stop current speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9; // Slightly slower pace for clarity
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Input Type Toggle (Image vs Text)
+        function selectInputType(type) {
+            currentInputType = type; // <-- FIX: antes nunca se guardaba, por eso las imágenes nunca se enviaban al servidor
+            const btnImg = document.getElementById('tabBtnImage');
+            const btnTxt = document.getElementById('tabBtnText');
+            const btnAud = document.getElementById('tabBtnAudio');
+            const areaImg = document.getElementById('inputAreaImage');
+            const areaTxt = document.getElementById('inputAreaText');
+            const areaAud = document.getElementById('inputAreaAudio');
+
+            const botones = { image: btnImg, text: btnTxt, audio: btnAud };
+            const areas = { image: areaImg, text: areaTxt, audio: areaAud };
+
+            Object.keys(botones).forEach(key => {
+                botones[key].className = (key === type) ? CLASE_TAB_ACTIVA : CLASE_TAB_INACTIVA;
+                areas[key].classList.toggle('hidden', key !== type);
+            });
+        }
+
+        function triggerFileInput() {
+            document.getElementById('imageInput').click();
+        }
+
+        function handleImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                selectedImageMimeType = file.type || 'image/png';
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImageBase64 = e.target.result;
+                    document.getElementById('imagePreview').src = selectedImageBase64;
+                    document.getElementById('uploadPlaceholder').classList.add('hidden');
+                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
+                    showToast("Foto cargada con éxito");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Limpia la imagen seleccionada sin necesidad de un evento de clic
+        function clearSelectedImage() {
+            selectedImageBase64 = null;
+            selectedImageMimeType = 'image/png';
+            document.getElementById('imageInput').value = '';
+            document.getElementById('imagePreview').src = '';
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('imagePreviewContainer').classList.add('hidden');
+        }
+
+        function removeSelectedImage(event) {
+            event.stopPropagation();
+            clearSelectedImage();
+        }
+
+        function triggerAudioInput() {
+            document.getElementById('audioInput').click();
+        }
+
+        function handleAudioSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > AUDIO_MAX_BYTES) {
+                showToast("El audio es muy pesado. Usa una nota de voz de menos de 5 MB.");
+                event.target.value = '';
+                return;
+            }
+
+            selectedAudioMimeType = file.type || 'audio/mpeg';
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedAudioBase64 = e.target.result;
+                document.getElementById('audioPreview').src = selectedAudioBase64;
+                document.getElementById('audioFileName').innerText = file.name;
+                document.getElementById('audioUploadPlaceholder').classList.add('hidden');
+                document.getElementById('audioPreviewContainer').classList.remove('hidden');
+                showToast("Audio cargado con éxito");
+            };
+            reader.onerror = function() {
+                showToast("No se pudo leer el audio. Intenta de nuevo.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Limpia el audio seleccionado sin necesidad de un evento de clic
+        function clearSelectedAudio() {
+            selectedAudioBase64 = null;
+            selectedAudioMimeType = null;
+            document.getElementById('audioInput').value = '';
+            const preview = document.getElementById('audioPreview');
+            preview.pause();
+            preview.src = '';
+            document.getElementById('audioFileName').innerText = '';
+            document.getElementById('audioUploadPlaceholder').classList.remove('hidden');
+            document.getElementById('audioPreviewContainer').classList.add('hidden');
+        }
+
+        function removeSelectedAudio(event) {
+            event.stopPropagation();
+            clearSelectedAudio();
+        }
+
+        function loadPreset(key) {
+            const texto = PRESETS[key];
+            if (!texto) return;
+
+            selectInputType('text');
+            document.getElementById('textInput').value = texto;
+            showToast("Ejemplo cargado en el cuadro de texto");
+            speakText("Ejemplo cargado. Haz clic en Analizar mensaje.");
+        }
+
+        async function startAIAnalysis() {
+            const processCard = document.getElementById('aiProcessCard');
+            const resultCard = document.getElementById('resultCard');
+            if (processCard) processCard.classList.remove('hidden');
+            if (resultCard) resultCard.classList.add('hidden');
+
+            // Leer el texto de forma segura (el textarea único del formulario)
+            const textInputEl = document.getElementById('textInput');
+            const textVal = textInputEl ? textInputEl.value.trim() : "";
+
+            // Armar el cuerpo: se puede enviar imagen, texto o ambos juntos
+            const bodyData = {};
+            if (currentInputType === 'image' && selectedImageBase64) {
+                bodyData.imagenBase64 = selectedImageBase64.includes(',')
+                    ? selectedImageBase64.split(',')[1]
+                    : selectedImageBase64;
+                bodyData.mimeType = selectedImageMimeType || 'image/png';
+            }
+            if (currentInputType === 'audio' && selectedAudioBase64) {
+                bodyData.audioBase64 = selectedAudioBase64.includes(',')
+                    ? selectedAudioBase64.split(',')[1]
+                    : selectedAudioBase64;
+                bodyData.audioMimeType = selectedAudioMimeType || 'audio/mpeg';
+            }
+            if (textVal) {
+                bodyData.texto = textVal;
+            }
+
+            if (!bodyData.texto && !bodyData.imagenBase64 && !bodyData.audioBase64) {
+                if (processCard) processCard.classList.add('hidden');
+                alert("Por favor escribe un mensaje, selecciona una imagen o sube un audio para analizar.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/analizar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+
+                // Se lee como texto y se parsea con calma: si el servidor responde
+                // HTML (p. ej. 404 de un hosting sin backend), JSON.parse fallaría
+                // con "Unexpected token '<'". Así mostramos un mensaje claro.
+                const rawBody = await response.text();
+                let data = null;
+                try { data = JSON.parse(rawBody); } catch { data = null; }
+
+                if (!response.ok || !data) {
+                    throw new Error(
+                        data?.error ||
+                        `El servidor no respondió correctamente (HTTP ${response.status}). ` +
+                        'Si estás usando la versión publicada, verifica que las funciones del backend estén desplegadas; en local, ejecuta "node server.js".'
+                    );
+                }
+
+                applyRiskTheme(data.nivelRiesgo);
+                document.getElementById('resultTitle').innerText = data.titulo || "Análisis Completado";
+                document.getElementById('resultExplanation').innerText = data.explicacion || "";
+                document.getElementById('actionAdviceText').innerText = data.queHacer || "";
+                renderRedFlags(Array.isArray(data.banderasRojas) ? data.banderasRojas : []);
+
+                if (processCard) processCard.classList.add('hidden');
+                resultCard.classList.remove('hidden');
+                resultCard.scrollIntoView({ behavior: 'smooth' });
+
+                saveToHistory(data);
+
+                speakText((data.titulo || "") + ". " + (data.explicacion || ""));
+
+            } catch (err) {
+                console.error("Error al analizar:", err);
+                alert(err.message || "Ocurrió un error al conectar con el servidor.");
+                if (processCard) processCard.classList.add('hidden');
+            }
+        }
+
+        // Colorea la tarjeta de resultado según el nivel de riesgo que devolvió la IA
+        function applyRiskTheme(nivelRiesgo) {
+            const banner = document.getElementById('resultBanner');
+            const badgeIcon = document.getElementById('resultBadgeIcon');
+            const riskLevel = document.getElementById('resultRiskLevel');
+            const innerIcon = badgeIcon ? badgeIcon.querySelector('i') : null;
+            if (!banner || !badgeIcon || !riskLevel) return;
+
+            const themes = {
+                'ALTO': {
+                    border: 'border-red-500 shadow-red-500/10',
+                    iconBox: 'bg-red-500/20 text-red-500 border-red-500/30',
+                    iconClass: 'fa-solid fa-triangle-exclamation',
+                    pill: 'bg-red-600 text-white'
+                },
+                'MEDIO': {
+                    border: 'border-amber-500 shadow-amber-500/10',
+                    iconBox: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                    iconClass: 'fa-solid fa-circle-exclamation',
+                    pill: 'bg-amber-500 text-slate-950'
+                }
+            };
+            const theme = themes[nivelRiesgo] || {
+                border: 'border-emerald-500 shadow-emerald-500/10',
+                iconBox: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+                iconClass: 'fa-solid fa-circle-check',
+                pill: 'bg-emerald-600 text-white'
+            };
+
+            banner.className = `p-6 sm:p-8 rounded-3xl border-2 shadow-2xl space-y-6 bg-slate-900 ${theme.border}`;
+            badgeIcon.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 ${theme.iconBox}`;
+            if (innerIcon) innerIcon.className = theme.iconClass;
+            riskLevel.className = `text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full ${theme.pill}`;
+            riskLevel.innerText = `${nivelRiesgo || 'EVALUADO'} RIESGO`;
+        }
+
+        // Pinta las señales sospechosas creando nodos con textContent.
+        // NUNCA interpolar el texto de la IA dentro de innerHTML: es contenido
+        // externo y permitiría inyección de HTML/scripts (XSS).
+        function renderRedFlags(flags) {
+            const container = document.getElementById('redFlagsList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            flags.forEach(flag => {
+                const li = document.createElement('li');
+                li.className = "flex items-start gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800";
+
+                const icon = document.createElement('i');
+                icon.className = 'fa-solid fa-circle-exclamation text-amber-400 shrink-0 mt-0.5';
+
+                const span = document.createElement('span');
+                span.textContent = String(flag ?? '');
+
+                li.appendChild(icon);
+                li.appendChild(span);
+                container.appendChild(li);
+            });
+        }
+
+        function readDiagnosisResult() {
+            const title = document.getElementById('resultTitle').textContent;
+            const explanation = document.getElementById('resultExplanation').textContent;
+            speakText(title + ". " + explanation);
+        }
+
+        function resetAnalysis() {
+            document.getElementById('textInput').value = '';
+            clearSelectedImage();
+            clearSelectedAudio();
+            document.getElementById('resultCard').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Guarda un análisis en el historial local.
+        // newItem viene directo de /api/analizar (nivelRiesgo, titulo, explicacion, banderasRojas, queHacer)
+        function saveToHistory(newItem) {
+            historyData.unshift(entradaDesdeAnalisis(newItem));
+            guardarHistorialLocal();
+            renderHistoryList();
+        }
+
+        // Borra todo el historial local (botones de Historial y Ajustes)
+        function clearHistory() {
+            if (!confirm('¿Seguro que quieres borrar todo tu historial de análisis? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            historyData = [];
+            guardarHistorialLocal();
+            renderHistoryList();
+            showToast('Historial borrado correctamente');
+        }
+
+        // Muestra un mensaje con ícono creando nodos (sin innerHTML)
+        function setFeedbackMessage(feedback, iconClass, message) {
+            feedback.innerHTML = '';
+            const icon = document.createElement('i');
+            icon.className = iconClass + ' mr-1';
+            feedback.appendChild(icon);
+            feedback.appendChild(document.createTextNode(message));
+        }
+
+        function checkQuizAnswer(userSaysSafe) {
+            const feedback = document.getElementById('quizFeedback');
+            if (!feedback) return;
+
+            const isCorrect = userSaysSafe === false; // la respuesta correcta es "Es Falso / Estafa"
+
+            feedback.classList.remove('hidden', 'bg-emerald-950/40', 'text-emerald-300', 'bg-red-950/40', 'text-red-300');
+
+            if (isCorrect) {
+                feedback.classList.add('bg-emerald-950/40', 'text-emerald-300');
+                setFeedbackMessage(feedback, 'fa-solid fa-circle-check', '¡Correcto! Pedir que entres "inmediatamente" a un enlace para reactivar una tarjeta es una señal clásica de estafa.');
+                speakText('Correcto. Ese mensaje es una estafa.');
+            } else {
+                feedback.classList.add('bg-red-950/40', 'text-red-300');
+                setFeedbackMessage(feedback, 'fa-solid fa-circle-xmark', 'No exactamente. La palabra "inmediatamente" y el enlace para "reactivar" la tarjeta son señales típicas de phishing bancario.');
+                speakText('En realidad, ese mensaje es una estafa.');
+            }
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById('historyListContainer');
+            if (!container) return;
+
+            if (historyData.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-slate-500">
+                        <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
+                        <p class="text-sm">No tienes análisis guardados aún.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            historyData.forEach(item => {
+                // Compatibilidad: entradas viejas guardaban risk como HIGH/SAFE/MEDIUM
+                const esAlto = item.risk === 'ALTO' || item.risk === 'HIGH';
+                const esBajo = item.risk === 'BAJO' || item.risk === 'SAFE';
+
+                const badgeBg = esAlto ? 'bg-red-500/20 text-red-400 border-red-500/30' : (esBajo ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30');
+                const badgeText = esAlto ? 'PELIGRO' : (esBajo ? 'SEGURO' : 'SOSPECHOSO');
+
+                // Se construye con nodos y textContent: el título/explicación vienen
+                // de la IA y del historial local; interpolarlos en
+                // innerHTML permitiría inyección de HTML (XSS).
+                const card = document.createElement('div');
+                card.className = "p-4 bg-slate-950 rounded-2xl border border-slate-800 flex items-start justify-between flex-wrap gap-3 hover:border-amber-500/40 transition";
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'space-y-1 min-w-0';
+
+                const metaRow = document.createElement('div');
+                metaRow.className = 'flex items-center gap-2';
+
+                const badge = document.createElement('span');
+                badge.className = `text-[10px] font-bold uppercase px-2 py-1 rounded-full border ${badgeBg}`;
+                badge.textContent = badgeText;
+
+                const dateSpan = document.createElement('span');
+                dateSpan.className = 'text-xs text-slate-500';
+                dateSpan.textContent = item.date || '';
+
+                metaRow.appendChild(badge);
+                metaRow.appendChild(dateSpan);
+
+                const titleEl = document.createElement('h4');
+                titleEl.className = 'font-bold text-white';
+                titleEl.textContent = item.title || '';
+
+                const explEl = document.createElement('p');
+                explEl.className = 'text-sm text-slate-400 line-clamp-2';
+                explEl.textContent = item.explanation || '';
+
+                infoDiv.appendChild(metaRow);
+                infoDiv.appendChild(titleEl);
+                infoDiv.appendChild(explEl);
+
+                const readBtn = document.createElement('button');
+                readBtn.type = 'button';
+                readBtn.className = 'text-slate-500 hover:text-amber-400 transition shrink-0';
+                readBtn.setAttribute('aria-label', 'Leer análisis');
+                readBtn.title = 'Leer análisis';
+
+                const readIcon = document.createElement('i');
+                readIcon.className = 'fa-solid fa-volume-high';
+                readBtn.appendChild(readIcon);
+
+                readBtn.addEventListener('click', () => {
+                    speakText((item.title || '') + ". " + (item.explanation || ''));
+                });
+
+                card.appendChild(infoDiv);
+                card.appendChild(readBtn);
+                container.appendChild(card);
+            });
+        }
+    </script>
+
+
+</body>
+</html>
